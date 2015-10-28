@@ -63,14 +63,14 @@ create_trans = function(data, tolerance = 120){
           actual = actual + 1
           
           # Agregamos URL
-          transaction = c(transaction, trans.nueva)
+          transaction = c(transaction, paste(unique(strsplit(trans.nueva, split = ",")[[1]]), collapse = ","))
           trans.nueva = get_url(data, i, whom[x])
         }
       }
       source.id = c(source.id, i)
       trans.id = c(trans.id, actual)
       actual = actual + 1
-      transaction = c(transaction, trans.nueva)
+      transaction = c(transaction, paste(unique(strsplit(trans.nueva, split = ",")[[1]]), collapse = ","))
       # Terminamos de analizar para el is i actual
     }else{
       source.id = c(source.id, i)
@@ -79,11 +79,12 @@ create_trans = function(data, tolerance = 120){
       transaction = c(transaction, get_url(data, i, whom[1]))
     }
   }
-  x = data.frame(source.id, trans.id, transaction)
+  items = transaction
+  x = data.frame(items)
   return(x)
 }
 
-data = read.csv("pixel_hit.csv",
+data = read.csv(file.choose(),
                 encoding = "UTF-8", 
                 stringsAsFactors = F)
 
@@ -96,11 +97,14 @@ data$timestamp = parse_iso_8601(data$timestamp)
 
 #data = data[1:100,1:7]
 # Creating gaps structure
-gaps = create_gaps(data)
+
 
 new = create_trans(data = data, tolerance = 120)
 
-write.csv(x = new, file = "transactions.csv")
+write.csv(x = new, file = "vivalafete.csv")
+
+gaps = create_gaps(data)
+
 # Subset according to gap
 gaps = subset(gaps, subset = gap<=120 & gap>0)
 
