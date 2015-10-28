@@ -32,9 +32,7 @@ create_gaps = function(data){
 }
 
 get_url = function(data, prdctvID, timestamp){
-  attach(data)
-  url = get_params.url[get_params.prdctvId == prdctvID & timestamp == timestamp]
-  detach(data)
+  url = data$get_params.url[data$get_params.prdctvId == prdctvID & data$timestamp == timestamp]
   return(url)
 }
 
@@ -42,6 +40,7 @@ create_trans = function(data, tolerance = 120){
   id = unique(data$get_params.prdctvId)
   tolerance = 120
   # To fill in Data Frame
+  source.id = character()
   trans.id = numeric()
   transaction = character()
   actual = 1
@@ -59,26 +58,28 @@ create_trans = function(data, tolerance = 120){
           # Fallo la tolerancia, nueva transaccion
           
           # Agregamos indice, actualizamos indice
-          trans.id = eappend(trans.id, actual)
+          source.id = c(source.id, i)
+          trans.id = c(trans.id, actual)
           actual = actual + 1
           
           # Agregamos URL
-          transaction = eappend(transaction, trans.nueva)
+          transaction = c(transaction, trans.nueva)
           trans.nueva = get_url(data, i, whom[x])
         }
       }
-      trans.id = eappend(trans.id, actual)
-      actual = actual +1
-      
-      transaction = eappend(transaction, trans.nueva)
+      source.id = c(source.id, i)
+      trans.id = c(trans.id, actual)
+      actual = actual + 1
+      transaction = c(transaction, trans.nueva)
       # Terminamos de analizar para el is i actual
     }else{
-      trans.id = eappend(trans.id, actual)
-      actual = actual +1 
-      transaction = eappend(transaction, get_url(data, i, whom[1]))
+      source.id = c(source.id, i)
+      trans.id = c(trans.id, actual)
+      actual = actual + 1 
+      transaction = c(transaction, get_url(data, i, whom[1]))
     }
   }
-  x = data.frame(trans.id, transaction)
+  x = data.frame(source.id, trans.id, transaction)
   return(x)
 }
 
@@ -93,10 +94,13 @@ data$timestamp = substr(data$timestamp,
 # Change Date Format from ISO 8601 to POSIX
 data$timestamp = parse_iso_8601(data$timestamp)
 
-data = data[100,1:7]
+#data = data[1:100,1:7]
 # Creating gaps structure
 gaps = create_gaps(data)
 
+new = create_trans(data = data, tolerance = 120)
+
+write.csv(x = new, file = "transactions.csv")
 # Subset according to gap
 gaps = subset(gaps, subset = gap<=120 & gap>0)
 
