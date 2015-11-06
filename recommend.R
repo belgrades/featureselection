@@ -1,5 +1,15 @@
 library(urltools)
 
+lappend <- function ( lst, ...){
+  lst <- c(lst, list(...))
+  return(lst)
+}
+
+eappend <- function(elem, ...){
+  elem <- c(elem, ...)
+  return(elem)
+}
+
 transform_url <-function(url){
   # Esta funcion depende del contexto del problema
 
