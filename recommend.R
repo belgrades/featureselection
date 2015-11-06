@@ -1,3 +1,5 @@
+library(urltools)
+
 transform_url <-function(url){
   # Esta funcion depende del contexto del problema
 
