@@ -129,9 +129,6 @@ create_transactions = function(trans){
 }
 
 process = function(data){
-    data = read.csv(file.choose(),
-                encoding = "UTF-8",
-                stringsAsFactors = F)
     new = create_trans(data = data, tolerance = 120)
     trans = create_transactions(new)
     return(trans)
