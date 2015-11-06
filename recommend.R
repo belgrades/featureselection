@@ -1,8 +1,3 @@
-library(parsedate)
-library(urltools)
-library(arules)
-
-
 transform_url <-function(url){
   # Esta funcion depende del contexto del problema
 
@@ -120,12 +115,13 @@ create_transactions = function(trans){
   return(transactions)
 }
 
-exit = process(data){
+process = function(data){
     data = read.csv(file.choose(),
                 encoding = "UTF-8",
                 stringsAsFactors = F)
     new = create_trans(data = data, tolerance = 120)
     trans = create_transactions(new)
+    return(trans)
 }
 
 
