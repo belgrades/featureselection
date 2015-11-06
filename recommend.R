@@ -1,4 +1,5 @@
 library(urltools)
+library(arules)
 
 lappend <- function ( lst, ...){
   lst <- c(lst, list(...))
